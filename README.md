@@ -27,8 +27,7 @@ Hardware Inputs
  Real-time Monitoring
 ```
 
-Additional hardware components include **LCD displays, LEDs, and an RTC module**.
-
+Additional hardware components include input devices such as a joystick, microphone, and push button, as well as output devices including LEDs, a 16x2 LCD display, and a MAX7219 LED matrix.
 ---
 
 # Labs
