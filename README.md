@@ -8,7 +8,7 @@ The labs demonstrate fundamental embedded programming concepts such as **GPIO co
 # System Architecture
 
 Arduino collects data from sensors and communicates with a Python interface through **serial communication**.
-'''
+```
 Hardware Inputs
 (Joystick, Microphone, Button)
         │
@@ -25,7 +25,7 @@ Hardware Inputs
         ▼
  Python GUI (PyQt6)
  Real-time Monitoring
- '''
+```
 
 Additional hardware components include **LCD displays, LEDs, and an RTC module**.
 
