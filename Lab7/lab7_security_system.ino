@@ -3,15 +3,14 @@
 #include <Keypad.h>
 #include <IRremote.hpp>
 
-// ===================== PIN DEFINITIONS =====================
+
 #define RST_PIN         9
 #define SS_PIN          10
 #define IR_RECEIVE_PIN  A1
 #define LED_RED         A2
 #define LED_GREEN       A3
 
-// ===================== SYSTEM STATES =====================
-enum State {
+
   WAITING_FOR_PASSCODE,
   LOCKED,
   UNLOCKED
@@ -22,7 +21,7 @@ State currentState = WAITING_FOR_PASSCODE;
 String masterCode = "";
 String currentInput = "";
 
-// ===================== KEYPAD SETUP =====================
+
 const byte ROWS = 4;
 const byte COLS = 4;
 
@@ -33,21 +32,20 @@ char keys[ROWS][COLS] = {
   {'*','0','#','D'}
 };
 
-// Rows on Digital 8-5
-// Columns on Digital 4-2 and Analog A0
+
 byte rowPins[ROWS] = {8, 7, 6, 5};
 byte colPins[COLS] = {4, 3, 2, A0};
 
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
-// ===================== RFID SETUP =====================
+
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-// ===================== TIMING SETTINGS =====================
+
 const unsigned long IR_COOLDOWN_MS = 450;
 const unsigned long RFID_COOLDOWN_MS = 3000;
 
-// ===================== SETUP =====================
+
 void setup() {
   Serial.begin(9600);
 
@@ -63,7 +61,6 @@ void setup() {
   Serial.println("Step 1: Enter a 4-digit code on the KEYPAD to lock.");
 }
 
-// ===================== MAIN LOOP =====================
 void loop() {
   updateLEDs();
 
@@ -82,7 +79,6 @@ void loop() {
   }
 }
 
-// ===================== STATE 1: KEYPAD LOGIC =====================
 void handleKeypad() {
   char key = keypad.getKey();
 
@@ -90,7 +86,6 @@ void handleKeypad() {
     return;
   }
 
-  // Only accept numerical keys
   if (key >= '0' && key <= '9') {
     currentInput += key;
     Serial.print("*");
@@ -108,7 +103,6 @@ void handleKeypad() {
     }
   }
 
-  // Optional: clear input using *
   if (key == '*') {
     currentInput = "";
     Serial.println();
@@ -116,7 +110,6 @@ void handleKeypad() {
   }
 }
 
-// ===================== STATE 2: IR LOGIC =====================
 void handleIR() {
   static unsigned long lastIRTime = 0;
   static uint16_t lastCommand = 0;
@@ -128,13 +121,11 @@ void handleIR() {
   uint16_t command = IrReceiver.decodedIRData.command;
   unsigned long now = millis();
 
-  // Ignore repeat frames caused by holding a remote button
   if (IrReceiver.decodedIRData.flags & IRDATA_FLAGS_IS_REPEAT) {
     IrReceiver.resume();
     return;
   }
 
-  // Ignore the same command if it arrives too quickly
   if (command == lastCommand && now - lastIRTime < IR_COOLDOWN_MS) {
     IrReceiver.resume();
     return;
@@ -169,7 +160,6 @@ void handleIR() {
   IrReceiver.resume();
 }
 
-// ===================== STATE 3: RFID LOGIC =====================
 void handleRFID() {
   static String lastUid = "";
   static unsigned long lastReadTime = 0;
@@ -196,7 +186,6 @@ void handleRFID() {
 
   unsigned long now = millis();
 
-  // Prevent the same tag from being counted repeatedly too fast
   if (uid == lastUid && now - lastReadTime < RFID_COOLDOWN_MS) {
     mfrc522.PICC_HaltA();
     mfrc522.PCD_StopCrypto1();
@@ -215,13 +204,11 @@ void handleRFID() {
   mfrc522.PCD_StopCrypto1();
 }
 
-// ===================== LED PATTERN LOGIC =====================
 void updateLEDs() {
   static unsigned long lastMillis = 0;
   static bool blinkState = false;
 
   if (currentState == WAITING_FOR_PASSCODE) {
-    // Waiting/setup mode: both LEDs blink together
     if (millis() - lastMillis > 500) {
       lastMillis = millis();
       blinkState = !blinkState;
@@ -232,21 +219,17 @@ void updateLEDs() {
   }
 
   else if (currentState == LOCKED) {
-    // Locked mode: red ON, green OFF
     digitalWrite(LED_RED, HIGH);
     digitalWrite(LED_GREEN, LOW);
   }
 
   else if (currentState == UNLOCKED) {
-    // Unlocked mode: red OFF, green ON
     digitalWrite(LED_RED, LOW);
     digitalWrite(LED_GREEN, HIGH);
   }
 }
 
-// ===================== SUCCESS FLASH =====================
 void flashSuccessLED() {
-  // Brief flash when RFID tag is successfully read
   digitalWrite(LED_RED, HIGH);
   digitalWrite(LED_GREEN, HIGH);
   delay(150);
@@ -255,7 +238,6 @@ void flashSuccessLED() {
   digitalWrite(LED_GREEN, HIGH);
 }
 
-// ===================== IR HELPER =====================
 char decodeIRDigit(uint16_t cmd) {
   switch (cmd) {
     case 0x16: return '0';
