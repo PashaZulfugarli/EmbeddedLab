@@ -10,24 +10,23 @@ The labs demonstrate fundamental embedded programming concepts such as **GPIO co
 Arduino collects data from sensors and communicates with a Python interface through **serial communication**.
 ```
 Hardware Inputs
-(Joystick, Microphone, Button)
+(Joystick, Microphone, Button, Keypad, IR Remote, RFID)
         │
         ▼
    Arduino UNO
-(Microcontroller + ADC + Timers)
+(Microcontroller + ADC + Timers + SPI)
         │
    Output Devices
- (LEDs, LCD, LED Matrix)
+ (LEDs, LCD, LED Matrix, Servo, Stepper Motor, Buzzer)
         │
         ▼
  Serial Communication
         │
         ▼
- Python GUI (PyQt6)
- Real-time Monitoring
+ Python GUI (tkinter / PyQt6)
+ Real-time Monitoring & Control
 ```
 
-Additional hardware components include input devices such as a joystick, microphone, and push button, as well as output devices including LEDs, a 16x2 LCD display, and a MAX7219 LED matrix.
 ---
 
 # Labs
@@ -83,14 +82,48 @@ The Arduino displays sound information on a **16x2 LCD** and sends monitoring da
 
 ---
 
+### Lab 6 – Two-Player Reaction Game
+A two-player competitive reaction game controlled via Arduino with a **Python tkinter GUI**.  
+A random countdown triggers a buzzer; the first player to press their button wins the round.  
+A servo motor and stepper motor respond to each round result, and the GUI tracks scores, reaction times, and player statistics with persistent CSV storage.
+
+**Concepts used**
+- Servo and stepper motor control
+- Serial communication with Python
+- State machine logic (IDLE → COUNTDOWN → ACTIVE)
+- False start detection
+- Python tkinter GUI with matplotlib statistics charts
+- CSV-based persistent player data storage
+
+---
+
+### Lab 7 – RFID Security System
+A multi-stage access control system using a **4x4 keypad**, **IR remote**, and **MFRC522 RFID reader**.  
+The system transitions through three states: setting a master passcode on the keypad, unlocking via IR remote, and logging RFID tag scans.  
+A **Python PyQt6 GUI** displays a live tag database with scan counts, timestamps, and search functionality backed by **SQLite**.
+
+**Concepts used**
+- SPI communication with RFID (MFRC522)
+- IR signal decoding (IRremote library)
+- 4x4 matrix keypad interfacing
+- Multi-stage state machine (WAITING_FOR_PASSCODE → LOCKED → UNLOCKED)
+- LED status indicators
+- Serial communication with Python
+- SQLite database management
+- PyQt6 GUI with real-time serial thread
+
+---
+
 # Technologies Used
 
 - **Arduino (C/C++)**
 - **Python**
-- **PyQt6**
+- **tkinter** and **PyQt6**
 - Serial Communication
 - Hardware Interrupts
 - Analog-to-Digital Conversion (ADC)
+- SPI Communication
+- SQLite Database
 
 ---
 
@@ -101,8 +134,14 @@ The Arduino displays sound information on a **16x2 LCD** and sends monitoring da
 - Analog Joystick Module
 - MAX7219 LED Matrix
 - 16x2 LCD Display
+- Servo Motor (SG90)
+- Stepper Motor (28BYJ-48 + ULN2003 driver)
+- MFRC522 RFID Reader + RFID Tags
+- 4x4 Matrix Keypad
+- IR Receiver + IR Remote
 - LEDs and resistors
 - Push buttons
+- Buzzer
 
 ---
 
@@ -112,7 +151,10 @@ The Arduino displays sound information on a **16x2 LCD** and sends monitoring da
 - Sensor interfacing
 - Hardware timers and interrupts
 - Serial communication between microcontroller and PC
-- Python GUI development
+- Python GUI development (tkinter, PyQt6)
+- Motor control (servo and stepper)
+- RFID and IR signal processing
+- Database integration (SQLite)
 - Embedded system debugging and testing
 
 ---
